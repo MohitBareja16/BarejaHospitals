@@ -1,0 +1,59 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-md-10">
+            <div class="card shadow border-warning"> <div class="card-header bg-warning text-dark">
+                    <h5 class="mb-0">Rescheduling Appointment</h5>
+                    <small>Currently: {{ appointment.date_scheduled }} at {{ appointment.time_scheduled }}</small>
+                </div>
+                
+                <div class="card-body">
+                    <p class="lead">Select a new time for Dr. {{ doctor.full_name }}:</p>
+                    
+                    <div class="d-flex mb-4 align-items-center">
+                        <div class="me-3"><span class="badge bg-success border">&nbsp;</span> Available</div>
+                        <div><span class="badge bg-secondary">&nbsp;</span> Busy</div>
+                    </div>
+
+                    {% if slots %}
+                        {% set current_date = namespace(value=None) %}
+                        <div class="row">
+                        {% for slot in slots %}
+                            
+                            {% if current_date.value != slot.date_str %}
+                                {% set current_date.value = slot.date_str %}
+                                <div class="col-12 mt-3 mb-2 border-bottom pb-1">
+                                    <h6 class="text-primary fw-bold">{{ slot.day_name }}, {{ slot.date_str }}</h6>
+                                </div>
+                            {% endif %}
+
+                            <div class="col-6 col-md-3 col-lg-2 mb-2">
+                                {% if slot.is_taken %}
+                                    <button class="btn btn-secondary w-100 disabled" disabled>
+                                        <small>{{ slot.start.strftime('%H:%M') }}</small>
+                                    </button>
+                                {% else %}
+                                    <form action="/reschedule/{{ appointment.id }}" method="POST">
+                                        <input type="hidden" name="date" value="{{ slot.date_str }}">
+                                        <input type="hidden" name="time" value="{{ slot.start }}">
+                                        
+                                        <button type="submit" class="btn btn-outline-success w-100">
+                                            <strong>{{ slot.start.strftime('%H:%M') }}</strong>
+                                            <br><span style="font-size: 0.7rem;">Confirm Change</span>
+                                        </button>
+                                    </form>
+                                {% endif %}
+                            </div>
+                        {% endfor %}
+                        </div>
+                    {% else %}
+                        <div class="alert alert-warning">No available slots found.</div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

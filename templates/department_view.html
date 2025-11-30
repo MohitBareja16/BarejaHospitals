@@ -1,0 +1,31 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container">
+    <a href="/patient_dashboard" class="btn btn-outline-secondary mb-3">&larr; Back to Dashboard</a>
+    
+    <div class="card shadow">
+        <div class="card-header bg-primary text-white">
+            <h3>Department of {{ dept.name }}</h3>
+        </div>
+        <div class="card-body">
+            <p class="lead">Available Specialists</p>
+            <div class="row">
+                {% for doctor in dept.doctors %}
+                <div class="col-md-6 mb-3">
+                    <div class="card h-100 border-primary">
+                        <div class="card-body">
+                            <h5 class="card-title">{{ doctor.full_name }}</h5>
+                            <p class="card-text text-muted">Qualification: {{ doctor.qualification or 'MBBS' }}</p>
+                            <a href="/book/{{ doctor.id }}" class="btn btn-success">Check Availability &amp; <i class="bi bi-calendar-check"></i> Book</a>
+                        </div>
+                    </div>
+                </div>
+                {% else %}
+                <p>No doctors found in this department.</p>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

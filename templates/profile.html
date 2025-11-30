@@ -1,0 +1,52 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <div class="card shadow">
+                <div class="card-header bg-dark text-white">
+                    Update Profile ({{ user.role|capitalize }})
+                </div>
+                <div class="card-body">
+                    <form method="POST">
+                        <div class="mb-3">
+                            <label>Username (Cannot change)</label>
+                            <input type="text" class="form-control" value="{{ user.username }}" disabled>
+                        </div>
+                        
+                        {% if user.role != 'admin' %}
+                            <div class="mb-3">
+                                <label>Full Name</label>
+                                <input type="text" name="full_name" class="form-control" value="{{ profile.full_name }}">
+                            </div>
+                        {% endif %}
+
+                        {% if user.role == 'patient' %}
+                            <div class="mb-3">
+                                <label>Phone Number</label>
+                                <input type="text" name="phone" class="form-control" value="{{ profile.phone or '' }}">
+                            </div>
+                            <div class="mb-3">
+                                <label>Address</label>
+                                <textarea name="address" class="form-control">{{ profile.address or '' }}</textarea>
+                            </div>
+                            <div class="mb-3">
+                                <label>Age</label>
+                                <input type="number" name="age" class="form-control" value="{{ profile.age or '' }}">
+                            </div>
+                        {% elif user.role == 'doctor' %}
+                            <div class="mb-3">
+                                <label>Qualification</label>
+                                <input type="text" name="qualification" class="form-control" value="{{ profile.qualification or '' }}">
+                            </div>
+                        {% endif %}
+
+                        <button type="submit" class="btn btn-primary w-100">Save Changes</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <div class="card shadow">
+                <div class="card-header bg-primary text-white">Edit Doctor Profile</div>
+                <div class="card-body">
+                    <form method="POST">
+                        <div class="mb-3">
+                            <label>Full Name</label>
+                            <input type="text" name="full_name" class="form-control" value="{{ doctor.full_name }}" required>
+                        </div>
+                        <div class="mb-3">
+                            <label>Department</label>
+                            <select name="department_id" class="form-select">
+                                {% for dept in departments %}
+                                    <option value="{{ dept.id }}" {% if doctor.department_id == dept.id %}selected{% endif %}>
+                                        {{ dept.name }}
+                                    </option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <button type="submit" class="btn btn-success w-100">Update Profile</button>
+                        <a href="/admin_dashboard" class="btn btn-link w-100 mt-2">Cancel</a>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

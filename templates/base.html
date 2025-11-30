@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
+    
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
+    <style>
+        :root {
+            /* Theme colors (medical) */
+            --primary: #0f766e;
+            --primary-hover: #115e59;
+            --accent: #2dd4bf;
+            --bg-light: #f8fafc;
+            --text-dark: #334155;
+            --card-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--bg-light);
+            color: var(--text-dark);
+            -webkit-font-smoothing: antialiased;
+        }
+
+    /* Navbar styles */
+        .navbar {
+            background-color: #ffffff !important;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+            padding: 0.8rem 1rem;
+        }
+        .navbar-brand {
+            font-weight: 700;
+            color: var(--primary) !important;
+            letter-spacing: -0.5px;
+        }
+        /* Brand mark and wordmark styling */
+        .brand-mark { display: inline-block; vertical-align: middle; border-radius:6px; }
+        .brand-text { font-weight: 700; color: var(--primary); font-size: 1.05rem; margin-left: 0.5rem; }
+        .nav-link {
+            font-weight: 500;
+            color: #64748b !important;
+            transition: color 0.2s;
+        }
+        .nav-link:hover {
+            color: var(--primary) !important;
+        }
+
+    /* Card styles */
+        .card {
+            border: none;
+            border-radius: 12px;
+            box-shadow: var(--card-shadow);
+            background: white;
+            margin-bottom: 20px;
+            overflow: hidden; /* rounds header corners */
+        }
+        .card-header {
+            background-color: #ffffff;
+            border-bottom: 1px solid #e2e8f0;
+            font-weight: 600;
+            padding: 1rem 1.25rem;
+            color: var(--primary);
+        }
+
+    /* Button styles */
+        .btn {
+            border-radius: 8px;
+            padding: 8px 16px;
+            font-weight: 500;
+            transition: all 0.2s;
+        }
+        .btn-primary {
+            background-color: var(--primary);
+            border: none;
+        }
+        .btn-primary:hover {
+            background-color: var(--primary-hover);
+            transform: translateY(-1px);
+        }
+        .btn-outline-primary {
+            color: var(--primary);
+            border-color: var(--primary);
+        }
+        .btn-outline-primary:hover {
+            background-color: var(--primary);
+            color: white;
+        }
+
+    /* Table styles */
+        .table {
+            margin-bottom: 0;
+        }
+        .table th {
+            background-color: #f1f5f9;
+            color: #475569;
+            font-weight: 600;
+            text-transform: uppercase;
+            font-size: 0.75rem;
+            letter-spacing: 0.5px;
+            border-top: none;
+        }
+        .table td {
+            vertical-align: middle;
+            border-bottom: 1px solid #f1f5f9;
+        }
+        
+    /* Badges */
+        .badge {
+            font-weight: 500;
+            padding: 0.5em 0.75em;
+            border-radius: 6px;
+        }
+    </style>
+</head>
+<body>
+
+    <nav class="navbar navbar-expand-lg mb-4">
+        <div class="container">
+            <a class="navbar-brand d-flex align-items-center fw-bold" href="/">
+                <!-- Formal SVG mark + wordmark for a professional header -->
+                <svg class="brand-mark" width="32" height="32" viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false">
+                    <rect width="64" height="64" rx="10" fill="var(--primary)"></rect>
+                    <path d="M32 18c-1.1 0-2 .9-2 2v6h-6c-1.1 0-2 .9-2 2v4c0 1.1.9 2 2 2h6v6c0 1.1.9 2 2 2h4c1.1 0 2-.9 2-2v-6h6c1.1 0 2-.9 2-2v-4c0-1.1-.9-2-2-2h-6v-6c0-1.1-.9-2-2-2h-4z" fill="#fff"></path>
+                </svg>
+                <span class="brand-text">BarejaHospitals</span>
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item"><a class="nav-link" href="/">Home</a></li>
+                    {% if current_user.is_authenticated %}
+                        <li class="nav-item"><a class="nav-link" href="/profile">My Profile</a></li>
+                        <li class="nav-item"><a class="nav-link text-danger" href="/logout">Logout</a></li>
+                    {% else %}
+                        <li class="nav-item"><a class="nav-link" href="/login">Login</a></li>
+                        <li class="nav-item"><a class="nav-link" href="/register">Register</a></li>
+                    {% endif %}
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container">
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                {% for category, message in messages %}
+                    <div class="alert alert-{{ category }} alert-dismissible fade show" role="alert">
+                        {{ message }}
+                        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                    </div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+
+        {% block content %}{% endblock %}
+    </div>
+    <div class="container-fluid bg-white border-top mt-5 py-5">
+    <div class="container">
+        <div class="row">
+                <div class="col-lg-4 mb-3">
+                <a class="d-flex align-items-center mb-2 link-dark text-decoration-none" href="/">
+                    <span class="fs-5 fw-bold text-primary">BarejaHospitals</span>
+                </a>
+                <p class="text-muted small">
+                    Advanced Hospital Management System designed for efficiency, security, and patient care.
+                </p>
+            </div>
+            <div class="col-6 col-lg-2 offset-lg-1 mb-3">
+                <h6 class="fw-bold mb-2">Platform</h6>
+                <ul class="list-unstyled text-muted small">
+                    <li class="mb-1"><a href="#" class="text-decoration-none text-muted">Doctors</a></li>
+                    <li class="mb-1"><a href="#" class="text-decoration-none text-muted">Patients</a></li>
+                    <li class="mb-1"><a href="#" class="text-decoration-none text-muted">Appointments</a></li>
+                </ul>
+            </div>
+            <div class="col-6 col-lg-2 mb-3">
+                <h6 class="fw-bold mb-2">Support</h6>
+                <ul class="list-unstyled text-muted small">
+                    <li class="mb-1"><a href="#" class="text-decoration-none text-muted">Help Center</a></li>
+                    <li class="mb-1"><a href="#" class="text-decoration-none text-muted">Privacy Policy</a></li>
+                    <li class="mb-1"><a href="#" class="text-decoration-none text-muted">Terms of Service</a></li>
+                </ul>
+            </div>
+            <div class="col-6 col-lg-2 mb-3">
+                <h6 class="fw-bold mb-2">Contact</h6>
+                <ul class="list-unstyled text-muted small">
+                    <li class="mb-1"><i class="bi bi-geo-alt me-1"></i> IIT Madras</li>
+                    <li class="mb-1"><i class="bi bi-envelope me-1"></i> support@barejahospitals.com</li>
+                </ul>
+            </div>
+        </div>
+        <div class="text-center text-muted small mt-4">
+            &copy; 2025 BarejaHospitals. All rights reserved.
+        </div>
+    </div>
+</div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
+<script>
+    // Auto-hide alert messages after 3 seconds
+    setTimeout(function() {
+        let alerts = document.querySelectorAll('.alert');
+        alerts.forEach(function(alert) {
+            let bsAlert = new bootstrap.Alert(alert);
+            bsAlert.close();
+        });
+    }, 3000);
+</script>

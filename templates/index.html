@@ -1,0 +1,57 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="p-5 mb-4 bg-light rounded-3 shadow-sm border" style="background: linear-gradient(135deg, #f0fdfa 0%, #ffffff 100%);">
+    <div class="container-fluid py-5">
+        <div class="row align-items-center">
+            <div class="col-md-7">
+                <h1 class="display-5 fw-bold text-primary mb-3">Modern Healthcare, <br>Simplified.</h1>
+                <p class="col-md-10 fs-4 text-muted mb-4">
+                    BarejaHospitals connects patients with top specialists instantly. 
+                    Manage appointments, view medical history, and get treated—all in one secure platform.
+                </p>
+                <div class="d-flex gap-3">
+                    {% if current_user.is_authenticated %}
+                        {% if current_user.role == 'patient' %}
+                            <a href="/patient_dashboard" class="btn btn-primary btn-lg px-4">Go to Dashboard</a>
+                        {% elif current_user.role == 'doctor' %}
+                            <a href="/doctor_dashboard" class="btn btn-primary btn-lg px-4">Doctor Console</a>
+                        {% else %}
+                            <a href="/admin_dashboard" class="btn btn-primary btn-lg px-4">Admin Panel</a>
+                        {% endif %}
+                    {% else %}
+                        <a href="/login" class="btn btn-primary btn-lg px-4 shadow-sm">Sign In</a>
+                        <a href="/register" class="btn btn-outline-secondary btn-lg px-4">New Patient?</a>
+                    {% endif %}
+                </div>
+            </div>
+            <div class="col-md-5 d-none d-md-block text-center">
+                <svg width="300" height="300" viewBox="0 0 24 24" fill="none" stroke="#0f766e" stroke-width="0.5" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M22 12h-4l-3 9L9 3l-3 9H2"/>
+                </svg>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row align-items-md-stretch">
+    <div class="col-md-4 mb-3">
+        <div class="h-100 p-4 text-white bg-primary rounded-3 shadow-sm">
+            <h3>Top Specialists</h3>
+            <p>Access our network of board-certified doctors across 6+ departments including Cardiology and Neurology.</p>
+        </div>
+    </div>
+    <div class="col-md-4 mb-3">
+        <div class="h-100 p-4 bg-white border rounded-3 shadow-sm">
+            <h3>Instant Booking</h3>
+            <p>No waiting on hold. View real-time doctor availability and book your slot in seconds.</p>
+        </div>
+    </div>
+    <div class="col-md-4 mb-3">
+        <div class="h-100 p-4 bg-white border rounded-3 shadow-sm">
+            <h3>Secure Records</h3>
+            <p>Your medical history, prescriptions, and diagnosis reports are encrypted and accessible only to you.</p>
+        </div>
+    </div>
+</div>
+{% endblock %}

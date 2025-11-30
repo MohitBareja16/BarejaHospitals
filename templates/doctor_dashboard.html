@@ -1,0 +1,206 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container">
+    <h2 class="mb-4">Doctor Dashboard <small class="text-muted fs-6">Welcome, Dr. {{ current_user.doctor_profile.full_name }}</small></h2>
+
+    <div class="row">
+        <div class="col-md-8">
+            <div class="card shadow mb-4">
+                <div class="card-header bg-primary text-white">
+                    Upcoming Appointments
+                </div>
+                <div class="card-body">
+                    <table class="table align-middle">
+                        <thead>
+                            <tr>
+                                <th>Date/Time</th>
+                                <th>Patient</th>
+                                <th>Status</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for appt in appointments %}
+                            <tr>
+                                <td>
+                                    {{ appt.date_scheduled }}<br>
+                                    <small class="text-muted">{{ appt.time_scheduled }}</small>
+                                </td>
+                                <td>
+                                    {{ appt.patient.full_name }}
+                                    <br>
+                                    <a href="/doctor_view_history/{{ appt.patient.id }}" class="text-decoration-none" style="font-size: 0.8rem;">
+                                        <i class="bi bi-clock-history"></i> History
+                                    </a>
+                                </td>
+                                <td>
+                                    {% if appt.status == 'Completed' %}
+                                        <span class="badge bg-success">Completed</span>
+                                    {% else %}
+                                        <span class="badge bg-warning text-dark">Scheduled</span>
+                                    {% endif %}
+                                </td>
+                                <td>
+                                    {% if appt.status == 'Scheduled' %}
+                                    <button type="button" class="btn btn-sm btn-outline-primary" 
+                                            data-bs-toggle="modal" data-bs-target="#treatModal{{ appt.id }}">
+                                        Diagnose
+                                    </button>
+        
+                                    <a href="/doctor_cancel_appointment/{{ appt.id }}" 
+                                    class="btn btn-sm btn-outline-danger"
+                                    onclick="return confirm('Cancel this appointment?');">
+                                    X
+                                    </a>
+                                    {% else %}
+                                        <button class="btn btn-sm btn-secondary" disabled>View Record</button>
+                                    {% endif %}
+                                </td>
+                                <td>
+                                    {% if appt.status != 'Completed' %}
+                                    <button type="button" class="btn btn-sm btn-outline-primary" 
+                                            data-bs-toggle="modal" data-bs-target="#treatModal{{ appt.id }}">
+                                        Diagnose / Treat
+                                    </button>
+
+                                    <div class="modal fade" id="treatModal{{ appt.id }}" tabindex="-1">
+                                        <div class="modal-dialog">
+                                            <div class="modal-content">
+                                                <div class="modal-header">
+                                                    <h5 class="modal-title">Treat Patient: {{ appt.patient.full_name }}</h5>
+                                                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                                                </div>
+                                                <form action="/add_treatment/{{ appt.id }}" method="POST">
+                                                    <div class="modal-body">
+                                                        <div class="mb-3">
+                                                            <label class="form-label">Diagnosis / Symptoms</label>
+                                                            <textarea name="diagnosis" class="form-control" rows="3" required></textarea>
+                                                        </div>
+                                                        <div class="mb-3">
+                                                            <label class="form-label">Prescription / Meds</label>
+                                                            <textarea name="prescription" class="form-control" rows="3" required></textarea>
+                                                        </div>
+                                                        <div class="row mb-3">
+                                                            <div class="col">
+                                                                <label class="form-label">Visit Type</label>
+                                                                <select name="visit_type" class="form-select">
+                                                                    <option value="In-person">In-person</option>
+                                                                    <option value="Online">Online</option>
+                                                                    <option value="Emergency">Emergency</option>
+                                                                </select>
+                                                            </div>
+                                                            <div class="col">
+                                                                <label class="form-label">Tests Done</label>
+                                                                <input type="text" name="tests_done" class="form-control" placeholder="e.g. ECG, X-Ray">
+                                                            </div>
+                                                        </div>
+                                                        <div class="mb-3">
+                                                            <label class="form-label">Private Notes (Optional)</label>
+                                                            <textarea name="notes" class="form-control" rows="2" placeholder="Internal notes only visible to doctors..."></textarea>
+                                                        </div>
+                                                    </div>
+                                                    <div class="modal-footer">
+                                                        <button type="submit" class="btn btn-success">Save Treatment</button>
+                                                    </div>
+                                                </form>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    {% else %}
+                                        <button class="btn btn-sm btn-secondary" disabled>View Record</button>
+                                    {% endif %}
+                                </td>
+                            </tr>
+                            {% else %}
+                                <tr><td colspan="4">No appointments scheduled.</td></tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <div class="card shadow mb-4">
+    <div class="card-header bg-secondary text-white">My Patients</div>
+    <div class="card-body">
+        {% if my_patients %}
+            <div class="table-responsive">
+                <table class="table table-sm table-hover">
+                    <thead>
+                        <tr>
+                            <th>Name</th>
+                            <th>Age</th>
+                            <th>Phone</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for pat in my_patients %}
+                        <tr>
+                            <td>{{ pat.full_name }}</td>
+                            <td>{{ pat.age or '-' }}</td>
+                            <td>{{ pat.phone or '-' }}</td>
+                                <td>
+                                <a href="/doctor_view_history/{{ pat.id }}" class="btn btn-sm btn-outline-info">
+                                    <i class="bi bi-clock-history"></i> History
+                                </a>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        {% else %}
+            <p class="text-muted">No patients assigned yet.</p>
+        {% endif %}
+    </div>
+</div>
+        </div>
+
+        <div class="col-md-4">
+            <div class="card shadow">
+                <div class="card-header bg-info text-white">My Availability</div>
+                <div class="card-body">
+                    <form action="/add_availability" method="POST">
+                        <div class="mb-2">
+                            <label>Day</label>
+                            <select name="day" class="form-select">
+                                <option>Monday</option>
+                                <option>Tuesday</option>
+                                <option>Wednesday</option>
+                                <option>Thursday</option>
+                                <option>Friday</option>
+                            </select>
+                        </div>
+                        <div class="row mb-2">
+                            <div class="col">
+                                <label>Start</label>
+                                <input type="time" name="start_time" class="form-control" required>
+                            </div>
+                            <div class="col">
+                                <label>End</label>
+                                <input type="time" name="end_time" class="form-control" required>
+                            </div>
+                        </div>
+                        <button type="submit" class="btn btn-info w-100 text-white">Add Slot</button>
+                    </form>
+
+                    <hr>
+                    <h6>Current Slots</h6>
+                    <ul class="list-group list-group-flush small">
+                        {% for slot in availabilities %}
+                            <li class="list-group-item d-flex justify-content-between align-items-center">
+                                {{ slot.day_of_week }}
+                                <span class="badge bg-light text-dark">
+                                    {{ slot.start_time.strftime('%H:%M') }} - {{ slot.end_time.strftime('%H:%M') }}
+                                </span>
+                            </li>
+                        {% else %}
+                            <li class="list-group-item text-muted">No availability set.</li>
+                        {% endfor %}
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

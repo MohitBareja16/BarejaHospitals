@@ -1,0 +1,54 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2>Medical History: <span class="text-primary">{{ patient.full_name }}</span></h2>
+        <a href="/doctor_dashboard" class="btn btn-outline-secondary">Back to Dashboard</a>
+    </div>
+
+    <div class="card shadow">
+        <div class="card-body">
+            {% if history %}
+                <div class="timeline">
+                    {% for record in history %}
+                    <div class="border-start border-3 border-primary ps-4 mb-4">
+                        <div class="d-flex justify-content-between">
+                            <h5 class="fw-bold">{{ record.date_scheduled }}</h5>
+                            <span class="badge bg-success">Treated by Dr. {{ record.doctor.full_name }}</span>
+                        </div>
+                        
+                        {% if record.treatment %}
+                            <div class="card bg-light mt-2">
+                                <div class="card-body">
+                                    <div class="row">
+                                        <div class="col-md-4">
+                                            <strong>Diagnosis:</strong>
+                                            <p>{{ record.treatment.diagnosis }}</p>
+                                        </div>
+                                        <div class="col-md-4">
+                                            <strong>Prescription:</strong>
+                                            <p>{{ record.treatment.prescription }}</p>
+                                        </div>
+                                        <div class="col-md-4">
+                                            <strong>Notes:</strong>
+                                            <p class="text-muted">{{ record.treatment.notes or 'No notes.' }}</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        {% else %}
+                            <p class="text-warning">Record marked completed but details missing.</p>
+                        {% endif %}
+                    </div>
+                    {% endfor %}
+                </div>
+            {% else %}
+                <div class="alert alert-info">
+                    This patient has no previous medical history recorded in the system.
+                </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}
