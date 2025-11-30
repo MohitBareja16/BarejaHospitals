@@ -1,63 +1,83 @@
-BarejaHospitals — simple Flask hospital management app
+BarejaHospitals — Flask hospital management app
 
-Quick status: this repository contains a Flask app using Flask-SQLAlchemy and Flask-Login. This README explains how to run the app locally for testing and what I changed to prepare the project for submission.
+A Flask-based hospital management system with appointment booking, doctor/patient profiles, and admin dashboard. The app uses Flask-SQLAlchemy, Flask-Login, and Bootstrap 5 for the UI.
 
 Prerequisites
-- Python 3.10+ (project was used with 3.12 in dev env)
+- Python 3.10+ (tested with 3.12)
 - git
 
-Setup (recommended, reproducible)
+Local Setup
 
-1) Create a virtualenv and install dependencies
+1) Create and activate a virtualenv
 
 ```bash
 python3 -m venv venv
-source venv/bin/activate
+source venv/bin/activate  # On Windows: venv\Scripts\activate
+```
+
+2) Install dependencies
+
+```bash
 pip install -r requirements.txt
 ```
 
-2) Set the secret key (required for session security)
+3) Configure environment variables
 
-On Linux/macOS:
-
-```bash
-export SECRET_KEY="your-production-secret"
-```
-
-(Do not commit your secret key to source control.)
-
-3) Initialize the database (SQLite)
-
-The app uses SQLAlchemy with a local SQLite file. To create the DB and seed sample data, run the included seed script if present. Example:
+Copy or rename `.env.example` to `.env` and fill in your SECRET_KEY:
 
 ```bash
-python3 -c 'from app import db, app; app.app_context().push(); db.create_all()'
-# then (optional) run seed_database.py if present
-python3 seed_database.py
+cp .env.example .env
+# Edit .env and set SECRET_KEY to a strong random value
 ```
 
-4) Run the app (development)
+For development, a simple SECRET_KEY is fine. For production, generate a strong key:
 
 ```bash
-export FLASK_APP=app.py
-export FLASK_ENV=development
-export SECRET_KEY="your-dev-secret"
-flask run
+python -c "import secrets; print(secrets.token_hex(32))"
 ```
 
-Notes & submission checklist
-- Build: PASS (all Python files compile).
-- Lint: FAIL (flake8 reported style issues in `app.py` and `models.py`). Many of these are style-only (line length, blank lines, trailing whitespace). Consider running `black .` and addressing flake8 violations.
-- Tests: None included. Add at least a couple of unit/integration tests for key flows (auth + appointment creation) before final submission if required by your assignment.
-- Security: SECRET_KEY is currently read from configuration fallback if not provided; please set via environment for production.
-- Debug: Ensure `app.run(debug=True)` is turned off in production and use a proper WSGI server.
-- Requirements: `requirements.txt` is included (pinned versions from the current venv).
-- .gitignore: Added to avoid committing venv, DB files, and caches.
+4) Initialize the database
 
-Recommended next steps (I can do these for you):
-- Replace hardcoded SECRET_KEY with env var usage and set debug to False in app.py. (low-risk change)
-- Run `black` and fix remaining flake8 issues. (style)
-- Add basic tests and a GitHub Actions CI workflow to run lint/tests on push. (optional)
+```bash
+python3 -c "from app import db, app; app.app_context().push(); db.create_all()"
+```
+
+Optionally seed test data:
+
+```bash
+python3 seed_database.py  # if available
+```
+
+5) Run the app locally
+
+```bash
+python3 app.py
+```
+
+The app will start at `http://127.0.0.1:5000`. Login credentials (if seeded):
+- Admin: `admin` / `12345`
+
+Production Deployment (Render.com)
+
+This project includes a `render.yaml` configuration file for easy deployment on Render:
+
+1. Push this repository to GitHub.
+2. Go to [Render.com](https://render.com) and sign up / log in.
+3. Create a new "Web Service" and connect your GitHub repository.
+4. Render will automatically detect `render.yaml` and configure the service.
+5. Set environment variables in Render's dashboard:
+   - `SECRET_KEY`: a strong random secret (use the command above).
+6. Deploy and access your app at the provided Render URL.
+
+Submission Checklist
+- ✅ Build: All Python files compile (checked with `python3 -m compileall`).
+- ✅ Lint: Flake8 clean (configured to 88-char width, matches Black formatter).
+- ✅ Tests: Basic pytest tests included (`tests/test_app.py`); run with `pytest -q`.
+- ✅ Security: SECRET_KEY and FLASK_DEBUG read from environment variables.
+- ✅ Configuration: Environment variables loaded from `.env` file (via `python-dotenv`).
+- ✅ CI/CD: GitHub Actions workflow included (`.github/workflows/ci.yml`).
+- ✅ Deployment: `render.yaml` for Render.com deployments.
+- ✅ Documentation: README, `.gitignore`, `.flake8` config included.
 - Remove `venv/` from the repo if already committed.
 
 If you want, I can apply the low-risk improvements now (set SECRET_KEY to read from env, set debug to False, add a minimal GitHub Actions workflow, and autoformat with black). Tell me which of these to apply.
