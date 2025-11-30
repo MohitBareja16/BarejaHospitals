@@ -1,4 +1,6 @@
 import os
+from dotenv import load_dotenv
+
 from flask import Flask, render_template, request, redirect, url_for, flash, jsonify
 from flask_login import (
     LoginManager,
@@ -21,14 +23,14 @@ from models import (
     Treatment,
 )
 
+# Load environment variables from .env file
+load_dotenv()
+
 app = Flask(__name__)
 
 app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///hospital.db"
 app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
-# Read SECRET_KEY from environment for production safety. Falls back to a
-# non-secret development value when not provided.
 app.config["SECRET_KEY"] = os.environ.get("SECRET_KEY", "dev-secret")
-# Debug mode can be enabled by setting FLASK_DEBUG=True in the environment.
 app.config["DEBUG"] = os.environ.get("FLASK_DEBUG", "False") == "True"
 
 db.init_app(app)
