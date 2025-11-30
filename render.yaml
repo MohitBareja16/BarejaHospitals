@@ -2,16 +2,11 @@ services:
   - type: web
     name: barejahospitals
     runtime: python
-    runtimeVersion: 3.12.0
-    buildCommand: pip install -r requirements.txt
-    startCommand: gunicorn app:app
+    runtimeVersion: "3.12"
+    buildCommand: pip install --upgrade pip && pip install -r requirements.txt
+    startCommand: gunicorn app:app --bind 0.0.0.0:$PORT
     envVars:
-      - key: SECRET_KEY
-        scope: run_and_build
-        value: ${SECRET_KEY}
-      - key: FLASK_DEBUG
-        scope: run_and_build
-        value: "False"
       - key: FLASK_ENV
-        scope: run_and_build
         value: production
+      - key: FLASK_DEBUG
+        value: "0"
